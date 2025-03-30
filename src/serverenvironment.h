@@ -81,6 +81,7 @@ struct LoadingBlockModifierDef
 	std::vector<std::string> trigger_contents;
 	std::string name;
 	bool run_at_every_load = false;
+	bool run_on_unknown = false;
 
 	virtual ~LoadingBlockModifierDef() = default;
 
@@ -151,6 +152,11 @@ private:
 	// The key of the map is the LBM def's first introduction time.
 	lbm_lookup_map m_lbm_lookup;
 
+	// For m_query_mode == true:
+	// LBMs with `run_on_unknown` enabled.
+	// The key of the map is the LBM def's first introduction time.
+	lbm_lookup_map m_unknown_lbm_lookup;
+
 	/// @return map of LBM name -> timestamp
 	static std::unordered_map<std::string, u32>
 	parseIntroductionTimesString(const std::string &times);
@@ -159,7 +165,11 @@ private:
 	// after the given time. This is guaranteed to return
 	// valid values for everything
 	lbm_lookup_map::const_iterator getLBMsIntroducedAfter(u32 time)
-	{ return m_lbm_lookup.lower_bound(time); }
+	{
+		if (time == BLOCK_TIMESTAMP_UNDEFINED)
+			return m_unknown_lbm_lookup.cbegin();
+		return m_lbm_lookup.lower_bound(time);
+	}
 };
 
 /*

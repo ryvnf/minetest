@@ -95,10 +95,12 @@ private:
 public:
 	LuaLBM(int id,
 			const std::vector<std::string> &trigger_contents,
-			const std::string &name, bool run_at_every_load):
+			const std::string &name, bool run_at_every_load,
+			bool run_on_unknown):
 		m_id(id)
 	{
 		this->run_at_every_load = run_at_every_load;
+		this->run_on_unknown = run_on_unknown;
 		this->trigger_contents = trigger_contents;
 		this->name = name;
 	}
@@ -289,9 +291,11 @@ void ScriptApiEnv::readLBMs()
 
 		bool run_at_every_load = getboolfield_default(L, current_lbm,
 			"run_at_every_load", false);
+		bool run_on_unknown = getboolfield_default(L, current_lbm,
+			"run_on_unknown", false);
 
 		LuaLBM *lbm = new LuaLBM(id, trigger_contents, name,
-			run_at_every_load);
+			run_at_every_load, run_on_unknown);
 
 		env->addLoadingBlockModifierDef(lbm);
 

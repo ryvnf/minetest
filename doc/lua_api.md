@@ -9493,10 +9493,9 @@ That means if an LBM callback adds a node, it won't be taken into account.
 However the engine guarantees that at the point in time when the callback is called
 that all given positions contain a matching node.
 
-*Note*: For maps generated in 5.11.0 or older, many newly generated blocks did not
-get a timestamp set. This means LBMs introduced between generation time and
-time of first activation will never run.
-Currently the only workaround is to use `run_at_every_load`.
+*Note*: For maps generated in 5.11.0 or older, many newly generated blocks did
+not get a timestamp set. This means LBMs introduced between generation time and
+time of first activation will never run, unless `run_on_unknown` is used.
 
 ```lua
 {
@@ -9516,6 +9515,11 @@ Currently the only workaround is to use `run_at_every_load`.
     -- Whether to run the LBM's action every time a block gets activated,
     -- and not only the first time the block gets activated after the LBM
     -- was introduced.
+
+    run_at_unknown = false,
+    -- Whether to run the LBM's action on mapblocks without a timestamp set.
+    -- This is used to work around the above mentioned bug which affected maps
+    -- generated in 5.11.0 or older.
 
     action = function(pos, node, dtime_s) end,
     -- Function triggered for each qualifying node.
